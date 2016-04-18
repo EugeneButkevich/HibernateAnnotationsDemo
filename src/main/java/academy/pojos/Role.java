@@ -20,10 +20,19 @@ public class Role implements Serializable {
 	@Column(name = "name")
 	private String name;
 
-	@OneToMany(mappedBy = "role")
+	@OneToMany(mappedBy = "role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private Set<Person> persons;
 
 	public Role() {
+	}
+
+	public Role(long id, String name) {
+		this.id = id;
+		this.name = name;
+	}
+
+	public Role(String name) {
+		this.name = name;
 	}
 
 	public Role(long id, String name, Set<Person> persons) {
@@ -54,6 +63,30 @@ public class Role implements Serializable {
 
 	public void setPersons(Set<Person> persons) {
 		this.persons = persons;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+/*		if (persons == null) {
+			if (!other.persons.isEmpty())
+				return false;
+		}  else if (!(persons.containsAll(other.persons)&&(other.persons.containsAll(persons))))
+			return false;*/
+		return true;
 	}
 
 }

@@ -1,6 +1,8 @@
 package academy.pojos;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,7 +33,7 @@ public class Person implements Serializable {
 	@JoinColumn(name = "role_id")
 	private Role role;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = "person_document", joinColumns = @JoinColumn(name = "person_id"), inverseJoinColumns = @JoinColumn(name = "document_id"))
 	private Set<Document> documents = new HashSet<Document>();
 
@@ -109,6 +111,43 @@ public class Person implements Serializable {
 
 	public void setDocuments(Set<Document> documents) {
 		this.documents = documents;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Person other = (Person) obj;
+		if (age != other.age)
+			return false;
+		if (documents == null) {
+			if (!other.documents.isEmpty())
+				return false;
+		} else if (!documents.containsAll(other.documents)&&(other.documents.containsAll(documents))){
+			System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+			return false; }
+		if (id != other.id)
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (role == null) {
+			if (other.role != null)
+				return false;
+		} else if (!role.equals(other.role))
+			return false;
+		if (surname == null) {
+			if (other.surname != null)
+				return false;
+		} else if (!surname.equals(other.surname))
+			return false;
+		return true;
 	}
 
 }
