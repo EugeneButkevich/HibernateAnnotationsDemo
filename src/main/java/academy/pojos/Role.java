@@ -6,7 +6,6 @@ import java.util.Set;
 import javax.persistence.*;
 
 @Entity
-/* @SequenceGenerator(name = "PK", sequenceName = "role") */
 @Table(name = "role")
 public class Role implements Serializable {
 
@@ -81,11 +80,6 @@ public class Role implements Serializable {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
-/*		if (persons == null) {
-			if (!other.persons.isEmpty())
-				return false;
-		}  else if (!(persons.containsAll(other.persons)&&(other.persons.containsAll(persons))))
-			return false;*/
 		return true;
 	}
 

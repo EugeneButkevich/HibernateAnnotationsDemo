@@ -1,10 +1,10 @@
 package academy.util;
 
-import java.io.Serializable;
 import java.util.Collection;
 
 import org.apache.log4j.Logger;
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -44,6 +44,7 @@ public class HibernateUtil {
 		return id;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<Person> getAllPersons() {
 		final Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -91,6 +92,27 @@ public class HibernateUtil {
 		}
 	}
 
+	public int updateRoleOfPersonThroughHqlRequest(Person person) {
+		final Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
+		int numberOfUpdatedEntities = 0;
+		String hql = "UPDATE Person set role_id=? WHERE id=?";
+		Query query = session.createQuery(hql);
+		query.setParameter(0, person.getRole().getId());
+		query.setParameter(1, person.getId());
+		try {
+			numberOfUpdatedEntities = query.executeUpdate();
+			session.update(person);
+		} catch (HibernateException e) {
+			log.error("Error was thrown in DAO: " + e);
+			transaction.rollback();
+		} finally {
+			transaction.commit();
+			session.close();
+		}
+		return numberOfUpdatedEntities;
+	}
+
 	public void saveOrUpdatePerson(Person person) {
 		final Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -113,6 +135,26 @@ public class HibernateUtil {
 		Transaction transaction = session.beginTransaction();
 		try {
 			person = (Person) session.get(Person.class, id);
+		} catch (HibernateException e) {
+			log.error("Error was thrown in DAO: " + e);
+			transaction.rollback();
+		} finally {
+			session.flush();
+			transaction.commit();
+			session.close();
+		}
+		return person;
+	}
+
+	public Person getPersonThroughHqlRequest(long id) {
+		Person person = null;
+		final Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
+		String hql = "FROM Person WHERE id=:idPerson";
+		try {
+			Query query = session.createQuery(hql);
+			query.setParameter("idPerson", id);
+			person = (Person) query.uniqueResult();
 		} catch (HibernateException e) {
 			log.error("Error was thrown in DAO: " + e);
 			transaction.rollback();
@@ -222,7 +264,7 @@ public class HibernateUtil {
 		}
 		return document;
 	}
-	
+
 	public void updateDocument(Document document) {
 		final Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -237,7 +279,7 @@ public class HibernateUtil {
 			session.close();
 		}
 	}
-	
+
 	public void deleteDocument(long idDocument) {
 		final Session session = sessionFactory.openSession();
 		Transaction transaction = session.beginTransaction();
@@ -252,6 +294,24 @@ public class HibernateUtil {
 			transaction.commit();
 			session.close();
 		}
+	}
+
+	public Double getAverageAgeOfPersons() {
+		Double averageAge = null;
+		final Session session = sessionFactory.openSession();
+		Transaction transaction = session.beginTransaction();
+		try {
+			Query query = session.createQuery("SELECT avg(age) FROM Person");
+			averageAge = (Double) query.uniqueResult();
+		} catch (HibernateException e) {
+			log.error("Error was thrown in DAO: " + e);
+			transaction.rollback();
+		} finally {
+			session.flush();
+			transaction.commit();
+			session.close();
+		}
+		return averageAge;
 	}
 
 	public void close() {

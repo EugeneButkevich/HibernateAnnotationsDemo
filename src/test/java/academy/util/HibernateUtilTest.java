@@ -211,6 +211,45 @@ public class HibernateUtilTest {
 		assertNotNull(util.getAllPersons());
 	}
 
+	@Test
+	public void getPersonThrougHqlRequest() throws Exception {
+		Role role = new Role();
+		Document document1 = new Document();
+		Document document2 = new Document();
+		Set<Document> documents = new HashSet<Document>();
+
+		role.setName("getPersonThroughHqlRequestTest");
+		document1.setTitle("Birth certificate");
+		document2.setTitle("Passport");
+		documents.add(document1);
+		documents.add(document2);
+		Person createdPerson = new Person(26, "Petr", "Petrovich", role, documents);
+		idPerson = addToDatabase(createdPerson);
+		Person obtainedPerson = util.getPersonThroughHqlRequest(idPerson);
+		assertEquals(createdPerson, obtainedPerson);
+	}
+
+	@Test
+	public void getAverageAgeOfPersonsTest() throws Exception {
+		Double averageAgeOfPersons;
+		averageAgeOfPersons = util.getAverageAgeOfPersons();
+		System.err.println("An average age of persons: " + averageAgeOfPersons);
+		assertNotNull(averageAgeOfPersons);
+	}
+
+	@Test
+	public void updatePersonThroughHqlRequestTest() throws Exception {
+		int numberOfUpdatedEntities = 0;
+		Role role1 = new Role("updatePersonThroughHqlRequestTest1");
+		Role role2 = new Role("updatePersonThroughHqlRequestTest2");
+		Person person = new Person(22, "Valentin", "Nikolaevich", role1, null);
+		util.addPerson(person);
+		util.addRole(role2);
+		person.setRole(role2);
+		numberOfUpdatedEntities = util.updateRoleOfPersonThroughHqlRequest(person);
+		assertNotNull(numberOfUpdatedEntities);
+	}
+
 	@AfterClass
 	public static void finish() {
 		util.close();

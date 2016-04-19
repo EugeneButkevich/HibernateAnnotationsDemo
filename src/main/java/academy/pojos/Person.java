@@ -1,15 +1,12 @@
 package academy.pojos;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.*;
 
 @Entity
-/* @SequenceGenerator(name = "PK", sequenceName = "person") */
 @Table(name = "person")
 public class Person implements Serializable {
 
@@ -127,9 +124,9 @@ public class Person implements Serializable {
 		if (documents == null) {
 			if (!other.documents.isEmpty())
 				return false;
-		} else if (!documents.containsAll(other.documents)&&(other.documents.containsAll(documents))){
-			System.err.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-			return false; }
+		} else if (!documents.containsAll(other.documents) && (other.documents.containsAll(documents))) {
+			return false;
+		}
 		if (id != other.id)
 			return false;
 		if (name == null) {
