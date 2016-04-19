@@ -212,7 +212,7 @@ public class HibernateUtilTest {
 	}
 
 	@Test
-	public void getPersonThrougHqlRequest() throws Exception {
+	public void getPersonThrougHqlRequestTest() throws Exception {
 		Role role = new Role();
 		Document document1 = new Document();
 		Document document2 = new Document();
